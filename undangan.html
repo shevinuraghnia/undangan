@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Undangan Pernikahan</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      background: #fff7f8;
+      color: #444;
+    }
+
+    section {
+      height: 100vh;
+      scroll-snap-align: start;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      flex-direction: column;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s ease-out;
+    }
+
+    section.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero {
+      background: linear-gradient(to bottom right, #f48ca5, #fff0f4);
+      color: white;
+      position: relative;
+    }
+
+    .hero-content {
+      z-index: 2;
+      position: relative;
+    }
+
+    .countdown {
+      background: #fff0f4;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      scroll-snap-align: start;
+      text-align: center;
+    }
+
+    .countdown h2 {
+      color: #f48ca5;
+      margin-bottom: 30px;
+      font-size: 2.2rem;
+    }
+
+    .countdown-boxes {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .box {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 80px;
+      height: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box div {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #f48ca5;
+    }
+
+    .box small {
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    .gallery {
+      background: #fff7f2;
+    }
+
+    .gallery h2 {
+      margin-bottom: 20px;
+      color: #f48ca5;
+    }
+
+    .gallery .photos {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .gallery img {
+      width: 300px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(244, 140, 165, 0.3);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+
+    .rsvp {
+      background: #fdf6f0;
+      padding: 40px 20px;
+    }
+
+    .rsvp h2 {
+      color: #f48ca5;
+      margin-bottom: 25px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 350px;
+      margin: 0 auto;
+    }
+
+    input, select, button {
+      padding: 12px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #f5a6b7;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background: #e3869a;
+    }
+
+    .tamu {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: #fff0f3;
+      padding: 10px 15px;
+      border-radius: 8px;
+      z-index: 100;
+      font-weight: 600;
+      color: #f48ca5;
+      box-shadow: 0 2px 6px rgba(244, 140, 165, 0.3);
+    }
+
+    .opening {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: #fdf6f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .open-button {
+      margin-top: 25px;
+      padding: 12px 30px;
+      background: #f5a6b7;
+      border: none;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(245,166,183,0.6);
+      transition: background-color 0.3s ease;
+    }
+
+    .open-button:hover {
+      background: #e3869a;
+    }
+
+    .main {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Amplop pembuka -->
+  <div class="opening" id="opening">
+    <h2 id="tamu-open">Kepada Yth.</h2>
+    <p>Anda diundang ke pernikahan kami</p>
+    <button class="open-button" onclick="bukaUndangan()">Buka Undangan</button>
+  </div>
+
+  <!-- Konten utama -->
+  <div class="main" id="mainContent">
+
+    <!-- Nama Tamu -->
+    <div class="tamu" id="nama-tamu">Kepada Yth.</div>
+
+    <!-- Musik -->
+    <audio id="bgm" loop>
+      <source src="lagu.mp4" type="audio/mpeg" />
+      Browsermu tidak mendukung audio.
+    </audio>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>The Wedding Of</h1>
+        <h2>Anwar & Yasmine</h2>
+        <p>Sabtu, 22 Juni 2025</p>
+      </div>
+    </section>
+
+    <!-- Identitas Pengantin -->
+    <section style="background:#fff0f3; color:#f48ca5; font-weight: 600;">
+      <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 20px;">
+        <div style="max-width: 300px; text-align: center;">
+          <img src="https://source.unsplash.com/200x200/?man" alt="Anwar" >
+          <h3>Muhammad Anwar Abdul Aziz</h3>
+          <p>Anak dari Bapak & Ibu</p>
+        </div>
+        <div style="max-width: 300px; text-align: center;">
+          <img src="https://source.unsplash.com/200x200/?man" alt="Yasmine" >
+          <h3>Yasmine Alaydrus</h3>
+          <p>Anak dari Bapak & Ibu</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Jadwal Acara -->
+<section style="background: #fff7f8;">
+  <div style="max-width: 500px; margin: 0 auto; text-align: center; font-size: 1.1rem; line-height: 1.6;">
+    <p><strong>📅 Tanggal:</strong> Sabtu, 22 Juni 2025</p>
+    <p><strong>🕘 Waktu:</strong> 09.00 - 12.00 WIB</p>
+    <p><strong>📍 Tempat:</strong> Gedung Serbaguna Bahagia</p>
+  </div>
+</section>
+
+
+    <!-- Countdown -->
+    <section class="countdown">
+      <h2>Hitung Mundur</h2>
+      <div class="countdown-boxes">
+        <div class="box"><div id="days">00</div><small>Hari</small></div>
+        <div class="box"><div id="hours">00</div><small>Jam</small></div>
+        <div class="box"><div id="minutes">00</div><small>Menit</small></div>
+        <div class="box"><div id="seconds">00</div><small>Detik</small></div>
+      </div>
+    </section>
+
+    <!-- Kisah cinta -->
+    <section style="background:#fff8f5;">
+      <h2>Kisah Kami</h2>
+      <p>Berawal dari pertemuan sederhana di rumah, tumbuh rasa cinta, dan kini kami siap melangkah ke jenjang suci pernikahan. Doakan kami.</p>
+    </section>
+
+    <!-- Galeri -->
+    <section class="gallery">
+      <h2>Galeri Foto</h2>
+      <div class="photos">
+        <img src="https://source.unsplash.com/400x300/?wedding,1" alt="Foto 1" />
+        <img src="https://source.unsplash.com/400x300/?wedding,2" alt="Foto 2" />
+        <img src="https://source.unsplash.com/400x300/?wedding,3" alt="Foto 3" />
+      </div>
+    </section>
+
+    <!-- RSVP -->
+    <section class="rsvp">
+      <h2>Konfirmasi Kehadiran</h2>
+      <form id="rsvpForm">
+        <input type="text" placeholder="Nama Anda" required />
+        <select required>
+          <option value="" disabled selected>Apakah Anda hadir?</option>
+          <option value="hadir">Hadir</option>
+          <option value="tidak">Tidak Hadir</option>
+        </select>
+        <button type="submit">Kirim</button>
+      </form>
+    </section>
+
+    <!-- Penutup -->
+    <section style="background: #f5a6b7; color:white;">
+      <h2>Terima Kasih</h2>
+      <p>Dengan cinta, Anwar & Yasmine</p>
+    </section>
+
+  </div>
+
+  <script>
+    // Nama tamu dari URL
+    function getNamaTamu() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const nama = urlParams.get("to");
+      if (nama && nama.trim() !== "") {
+        const namaDecoded = decodeURIComponent(nama);
+        document.getElementById("nama-tamu").innerText = "Kepada Yth. " + namaDecoded;
+        document.getElementById("tamu-open").innerText = "Kepada Yth. " + namaDecoded;
+      }
+    }
+
+    // Amplop pembuka & mulai musik
+    function bukaUndangan() {
+      document.getElementById("opening").style.display = "none";
+      document.getElementById("mainContent").style.display = "block";
+
+      const bgm = document.getElementById("bgm");
+      bgm.play().catch(e => {
+        bgm.style.display = "block";
+        console.log("Autoplay musik gagal:", e);
+      });
+    }
+
+    // Countdown
+    const weddingDate = new Date("June 22, 2025 09:00:00").getTime();
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = weddingDate - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("days").innerText = days >= 0 ? days : "00";
+      document.getElementById("hours").innerText = hours >= 0 ? hours : "00";
+      document.getElementById("minutes").innerText = minutes >= 0 ? minutes : "00";
+      document.getElementById("seconds").innerText = seconds >= 0 ? seconds : "00";
+
+      if (distance < 0) clearInterval(timer);
+    }, 1000);
+
+    // RSVP form handler
+    document.getElementById("rsvpForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const nama = this.querySelector("input").value;
+      const status = this.querySelector("select").value;
+      alert(`Terima kasih, ${nama}. Status kehadiran Anda: ${status}`);
+      this.reset();
+    });
+
+    // Animasi scroll
+    const sections = document.querySelectorAll("section");
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+    sections.forEach(section => observer.observe(section));
+
+    window.onload = getNamaTamu;
+  </script>
+
+</body>
+</html>
